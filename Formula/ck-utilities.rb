@@ -3,6 +3,7 @@ class CkUtilities < Formula
   homepage "https://github.com/cklukas/ckUtilities"
   url "https://github.com/cklukas/ckUtilities/archive/refs/tags/v0.1.1.tar.gz"
   version "0.1.1"
+  revision 1
   sha256 "1d08414c4c383f209a4c59bbd407605c3f7f5ce6c545bea4dc4e9c32ae6eae99"
   license "GPL-3.0-or-later"
 
@@ -54,6 +55,8 @@ class CkUtilities < Formula
            *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
+    # Avoid linking the bundled header over Homebrew's nlohmann-json dependency.
+    (include/"nlohmann").rmtree
   end
 
   test do
