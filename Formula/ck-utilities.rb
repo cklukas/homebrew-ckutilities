@@ -1,15 +1,14 @@
 class CkUtilities < Formula
   desc "ckVision-native terminal utility suite"
   homepage "https://github.com/cklukas/ckUtilities"
-  url "https://github.com/cklukas/ckUtilities/archive/refs/tags/v0.1.1.tar.gz"
-  version "0.1.1"
-  revision 1
-  sha256 "1d08414c4c383f209a4c59bbd407605c3f7f5ce6c545bea4dc4e9c32ae6eae99"
+  url "https://github.com/cklukas/ckUtilities/archive/refs/tags/v0.2.0.tar.gz"
+  version "0.2.0"
+  sha256 "c37ea42ddcdf24d5cff7e6f7fde88fbbae18e8bf7830f5d4114fb9ff9a8daba2"
   license "GPL-3.0-or-later"
 
   resource "ckvision" do
-    url "https://github.com/cklukas/ckVision/archive/338d950e7473c5fdd4f88ea6b37d9f842543ac15.tar.gz"
-    sha256 "fcded487cff6c55782c1723df659cef16abb8c1fcd0b4a95366a6b554f07fc6d"
+    url "https://github.com/cklukas/ckVision/archive/57b379d0dddd6a3b517b614a4eb2d1a1c99b474b.tar.gz"
+    sha256 "f9d54bc52541919c6d5700d32801432e0b258dc3c49f99a1b458caf952509508"
   end
 
   resource "llama_cpp" do
@@ -54,13 +53,15 @@ class CkUtilities < Formula
        "-DCK_LLAMA_CPP_SOURCE_DIR=#{llama_source}",
            *std_cmake_args
     system "cmake", "--build", "build"
-    system "cmake", "--install", "build"
-    # Avoid linking the bundled header over Homebrew's nlohmann-json dependency.
-    (include/"nlohmann").rmtree
+    # Only the product: the executables, documentation, license and
+    # sample configuration. Development headers and libraries, ours and
+    # the bundled llama.cpp's, would collide with Homebrew's own
+    # nlohmann-json and llama.cpp when the keg is linked.
+    system "cmake", "--install", "build", "--component", "Runtime"
   end
 
   test do
-    %w[ck-utilities ck-json-view ck-find ck-du ck-config ck-edit ck-chat].each do |tool|
+    %w[ck-utilities ck-json-view ck-find ck-du ck-config ck-edit ck-chat ck-todo ck-sysmon].each do |tool|
       assert_match "Usage:", shell_output("#{bin}/#{tool} --help")
     end
   end
